@@ -1,6 +1,7 @@
 # Dejan Petrovic Search Engine
 
 A modular web search engine prototype featuring a multi-stage retrieval and ranking pipeline.
+<img width="1909" height="919" alt="Web Search App" src="https://github.com/user-attachments/assets/f1cbffca-5d59-4a26-87fb-c72ae74becd3" />
 
 ## 🚀 Features
 
