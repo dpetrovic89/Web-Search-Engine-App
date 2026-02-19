@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dejan Petrovic Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 10vh;
+            transition: margin-top 0.5s ease;
+        }
+
+        .container.results-mode {
+            margin-top: 2vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            font-size: 1.1rem;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .results {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .result-title {
+            color: #818cf8;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-url {
+            color: #4ade80;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.75rem;
+        }
+
+        .metric-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .stats {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="header">
+            <h1 class="logo">Dejan Petrovic</h1>
+            <p style="color: var(--text-dim);">Design a web search engine prototype</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="query" placeholder="Search the web..." autocomplete="off">
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color: var(--text-dim);">Analyzing web index...</p>
+        </div>
+
+        <div class="stats" id="stats"></div>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        const queryInput = document.getElementById('query');
+        const resultsDiv = document.getElementById('results');
+        const loadingDiv = document.getElementById('loading');
+        const statsDiv = document.getElementById('stats');
+        const container = document.getElementById('container');
+
+        async function performSearch() {
+            const query = queryInput.value.trim();
+            if (!query) return;
+
+            // UI State
+            loadingDiv.style.display = 'block';
+            resultsDiv.style.display = 'none';
+            statsDiv.innerHTML = '';
+            container.classList.add('results-mode');
+
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                renderResults(data);
+            } catch (error) {
+                console.error('Search error:', error);
+                statsDiv.innerHTML = 'Error fetching results. Please try again.';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function renderResults(data) {
+            resultsDiv.innerHTML = '';
+            resultsDiv.style.display = 'flex';
+
+            statsDiv.innerHTML = `Found ${data.results.length} results in ${data.metrics.total_ms}ms 
+                (Retrieval: ${data.metrics.retrieval_ms}ms, Ranking: ${data.metrics.ranking_ms}ms)`;
+
+            if (data.results.length === 0) {
+                resultsDiv.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-dim);">No results found for "${data.query}".</div>`;
+                return;
+            }
+
+            data.results.forEach(res => {
+                const card = document.createElement('a');
+                card.className = 'result-card';
+                card.href = res.url;
+                card.target = '_blank';
+
+                card.innerHTML = `
+                    <div class="result-title">${res.title}</div>
+                    <span class="result-url">${res.url}</span>
+                    <div class="result-meta">
+                        <span class="metric-badge">Rank Score: ${res.rank_score.toFixed(4)}</span>
+                        <span class="metric-badge">Retrieval: ${res.score.toFixed(4)}</span>
+                    </div>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+
+        queryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+    </script>
+</body>
+
+</html>

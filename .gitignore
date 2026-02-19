@@ -1,0 +1,27 @@
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data and Index (Keep the directory structure, but ignore the content)
+data/*.json
+index/whoosh/
+index/tfidf_model.pkl
+index/vectors.npy
+index/metadata.pkl
+
+# Logs
+*.log
+
+# Windows specifics
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
