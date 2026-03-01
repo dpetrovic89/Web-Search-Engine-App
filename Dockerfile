@@ -19,6 +19,10 @@ COPY . .
 # Create data and index directories if they don't exist
 RUN mkdir -p data index/whoosh
 
+# Pre-build the index during the Docker build process
+# Note: This ensures the Space is ready to search on startup
+RUN python crawler.py && python indexer.py
+
 # The port Hugging Face Spaces expects
 ENV PORT=7860
 
