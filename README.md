@@ -1,3 +1,13 @@
+---
+title: Modern Search Engine
+emoji: 🔍
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+pinned: false
+app_file: app.py
+---
+
 # Dejan Petrovic Search Engine
 
 A modular web search engine prototype featuring a multi-stage retrieval and ranking pipeline.

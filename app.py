@@ -10,6 +10,7 @@ import os
 app = FastAPI(title="Dejan Petrovic Search Engine")
 
 # Initialize components
+# Deployment trigger tweak
 qp = QueryProcessor()
 ranker = Ranker()
 
